@@ -22,4 +22,4 @@ This implementation uses Unity's UGUI and TextMeshPro to create the UI of the Co
 
 UnityCommand as an abstract class will execute the commands during an early execution order point during the Update loop that way commands are executed on Unity's main thread and at a predictable time of the execution of the game. Since commands like 'clear' and 'quit' cannot be implemented in the core of the Console, 'clear' will remove all text from the TextArea and 'quit' will call UnityEngine.Application.Quit() implemented each as a UnityCommand.
 
-Assets are included for the background window and a open source font called Inconsolata(https://fonts.google.com/specimen/Inconsolata).
+Assets are included for the background window and an open source font called Inconsolata(https://fonts.google.com/specimen/Inconsolata).
