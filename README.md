@@ -17,9 +17,4 @@ list - Output all available and loaded commands to the console.
 
 Other commands such as 'clear' or 'quit' cannot be implemented by the core of the console due to not having a visual representation of the console itself or affect the state of the application and must be implemented based on the application it is being built for. For example, these commands would be implemented in the Unity version of the implementation.
 
-### Unity
-This implementation uses Unity's UGUI and TextMeshPro to create the UI of the ConsoleUI. This UI will color the text based on the type of log outputted from the console. The UI was created to look and function very similar to Valve's Source engine developer console(https://developer.valvesoftware.com/wiki/Developer_Console) including an adjustable window and performant TextArea that shows the outputted text. When calling UnityEngine.Debug.Log and other associated logging functions they are outputted to this Console class by this implementation hooking into the UnityEngine.Application.logMessageReceived event. Any calls to Console.Log and associated logging functions do not output to Unity's editor console window/log files.
-
-UnityCommand as an abstract class will execute the commands during an early execution order point during the Update loop that way commands are executed on Unity's main thread and at a predictable time of the execution of the game. Since commands like 'clear' and 'quit' cannot be implemented in the core of the Console, 'clear' will remove all text from the TextArea and 'quit' will call UnityEngine.Application.Quit() implemented each as a UnityCommand.
-
-Assets are included for the background window and an open source font called Inconsolata(https://fonts.google.com/specimen/Inconsolata).
+Check out the *Console For Unity* repository for an example of an implementation of this Console.
