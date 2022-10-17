@@ -155,8 +155,8 @@ namespace Elanetic.Console
 
         static public void ReloadCommands()
         {
-            m_CommandLookup.Clear();
-            m_AllCommandNames.Clear();
+            m_CommandLookup = new Dictionary<string, ConsoleCommand>(255);
+            m_AllCommandNames = new List<string>(255);
 
             //Clean up created commands
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
