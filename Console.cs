@@ -210,6 +210,9 @@ namespace Elanetic.Console
             Execute(commandName, splits.ToArray());
         }
 
+        /// <summary>
+        /// Retrieve the ConsoleCommand instance of a loaded command by its name.
+        /// </summary>
         static public ConsoleCommand FindCommandByName(string commandName)
         {
             if(m_CommandLookup.TryGetValue(commandName.ToLower(), out ConsoleCommand command))
@@ -219,12 +222,18 @@ namespace Elanetic.Console
             return null;
         }
 
+        /// <summary>
+        /// Get the names of all of the loaded commands.
+        /// </summary>
         static public string[] GetAllCommands()
         {
             //Copy to array that way the internal list is not modified.
             return m_AllCommandNames.ToArray();
         }
 
+        /// <summary>
+        /// Reinitiliaze all console commands. It is recommended that no references to existing console commands exist before calling this function so that the garbage collector can call the deconstructor on any of those instances before creating new ones.
+        /// </summary>
         static public void ReloadCommands()
         {
             m_CommandLookup = new Dictionary<string, ConsoleCommand>(255);
@@ -293,89 +302,6 @@ namespace Elanetic.Console
             //Add
             m_AllCommandNames.Add(commandName);
             m_CommandLookup.Add(commandName, command);
-        }
-
-        /// <summary>
-        /// Trim the string so that it starts with and ends with a maximum of one Environment.NewLine. Removes extra whitespace as well if a line simply contains whitespace.
-        /// </summary>
-        static private string TrimNewLines(string message)
-        {
-            string newLine = Environment.NewLine;
-            int index = 0;
-            int lastNewLine = -1;
-            bool IsNewLine()
-            {
-                if(index + newLine.Length > message.Length)
-                    return false;
-
-                for(int i = 0; i < newLine.Length; i++)
-                {
-                    if(message[index + i] != newLine[i])
-                        return false;
-                }
-                return true;
-            }
-
-            //Trim start
-
-            while(index < message.Length)
-            {
-                if(message[index] == ' ')
-                {
-                    index++;
-                    continue;
-                }
-                if(IsNewLine())
-                {
-                    lastNewLine = index;
-                    index += newLine.Length;
-                    continue;
-                }
-
-                break;
-            }
-
-            if(index == message.Length) return newLine;
-
-            if(lastNewLine >= 0)
-            {
-                message = message.Remove(0, lastNewLine);
-            }
-
-            //Trim end
-
-            index = message.Length - 1;
-            lastNewLine = -1;
-
-            while(index >= 0)
-            {
-                int oldIndex = index;
-                index = index - newLine.Length + 1;
-                if(IsNewLine())
-                {
-                    lastNewLine = index;
-                    index--;
-                    continue;
-                }
-
-                index = oldIndex;
-
-                if(message[index] == ' ')
-                {
-                    index--;
-                    continue;
-                }
-
-                break;
-            }
-
-            if(lastNewLine >= 0)
-            {
-                int startIndex = lastNewLine + newLine.Length;
-                message = message.Remove(startIndex, message.Length - startIndex);
-            }
-
-            return message;
         }
     }
 }
