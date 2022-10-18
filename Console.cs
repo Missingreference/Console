@@ -116,26 +116,98 @@ namespace Elanetic.Console
         /// </summary>
         static public void Parse(string command)
         {
-            command = command.Trim();
-            string[] splitStrings = command.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
-
-            if(command == string.Empty || splitStrings.Length == 0)
+            if(command == null)
             {
                 //Nothing to parse
                 return;
             }
 
-            if(splitStrings.Length > 1)
-            {
-                string[] args = new string[splitStrings.Length - 1];
-                Array.Copy(splitStrings, 1, args, 0, args.Length);
+            command = command.Trim();
 
-                Execute(splitStrings[0], args);
-            }
-            else
+            if(command.Length == 0)
             {
-                Execute(splitStrings[0], new string[0]);
+                //Nothing to parse
+                return;
             }
+
+            string commandName = "";
+            int i = 1;
+            for(; i < command.Length; i++)
+            {
+                if(command[i] != ' ') continue;
+
+                commandName = command.Substring(0, i);
+
+                while(command[i] == ' ') i++;
+
+                break;
+            }
+
+            if(commandName == "") commandName = command;
+
+            List<string> splits = new List<string>();
+            for(; i < command.Length; i++)
+            {
+                char character = command[i];
+                if(character == '"' || character == '\'')
+                {
+                    //Start string
+                    int startIndex = i;
+
+                    bool foundEndString = false;
+                    for(int h = i+1; h < command.Length; h++)
+                    {
+                        if(command[h] == character && (h == command.Length-1 || command[h+1] == ' '))
+                        {
+                            if(startIndex != h - 1) //Check if the string is empty
+                            {
+                                foundEndString = true;
+                                startIndex++;
+                                splits.Add(command.Substring(startIndex, h - startIndex));
+                                i = h;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    if(!foundEndString)
+                    {
+                        while(i < command.Length - 1 && command[i + 1] != ' ')
+                        {
+                            i++;
+                        }
+
+                        splits.Add(command.Substring(startIndex, i - startIndex + 1));
+                    }
+                }
+                else
+                {
+                    int startIndex = i;
+                    while(i < command.Length-1 && command[i+1] != ' ')
+                    {
+                        i++;
+                    }
+
+                    splits.Add(command.Substring(startIndex, i - startIndex + 1));
+                }
+
+                if(i < command.Length - 1)
+                {
+                    while(command[i+1] == ' ') i++;
+                }
+            }
+            
+            /*
+            string s = "Command: '" + commandName + "' ";
+            for(i = 0; i < splits.Count; i++)
+            {
+                s += "Arg[" + i.ToString() + "]: '" + splits[i] + "' ";
+            }
+            Console.Log(s);
+            */
+
+            Execute(commandName, splits.ToArray());
         }
 
         static public ConsoleCommand FindCommandByName(string commandName)
